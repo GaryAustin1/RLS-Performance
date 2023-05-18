@@ -1,0 +1,46 @@
+## RLS Performance and Best Practices
+
+Although most of the time spent on thinking about RLS is to get it to handle security needs, the impact of it on performance
+of your queries can be massive.
+This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.
+
+### Tools to measure performance (basic summary)
+
+Postgres has tools to analyze the peformance of queries.  https://www.postgresql.org/docs/current/sql-explain.html
+The use of explain in detail for query analysis is beyond the scope of this discussion.
+Here we will use it mainly to get a performance metric to compare times.
+
+PostgREST allows use of explain to get performance information on your queries with Supabase clients.
+
+Before using this feature you need to run the following command in the Dashboad SQL editor (should not be used in production):
+```sql
+set pgrst.db_plan_enabled to true;
+```
+Then you can use the .explain() modifier to get performance metrics.
+```js
+const { data, error } = await supabase
+  .from('projects')
+  .select('*')
+  .eq('id', 1)
+  .explain({ analyze: true })
+
+console.log(data)
+```
+This will return a result like:
+```
+Aggregate  (cost=8.18..8.20 rows=1 width=112) (actual time=0.017..0.018 rows=1 loops=1)
+  ->  Index Scan using projects_pkey on projects  (cost=0.15..8.17 rows=1 width=40) (actual time=0.012..0.012 rows=0 loops=1)
+        Index Cond: (id = 1)
+        Filter: false
+        Rows Removed by Filter: 1
+Planning Time: 0.092 ms
+Execution Time: 0.046 ms
+```
+In this case the execution time is the critical number we need to compare.
+
+This performance analysis can also be done in SQL by setting a user role and fake jwt claims information.
+
+
+
+
+
