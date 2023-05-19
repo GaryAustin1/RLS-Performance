@@ -4,13 +4,13 @@ Although most of the time spent on thinking about RLS is to get it to handle sec
 of your queries can be massive.
 This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.
 
-Please the  [last section](#tools-to-measure-performance) for ways to measure the performance of you queries as you test RLS improvements.
+Please the [last section](#tools-to-measure-performance) for ways to measure the performance of you queries as you test RLS improvements.
 
 
 
 ### Is RLS causing my peformance issue (on a single table query)?
 
-With either of the above methods run a query with RLS enabled on the table and then with it disabled.  If the results are similar then your query itself is likely the performance issue.
+For very slow queries, or if using the tools at end of article, run a query with RLS enabled on the table and then with it disabled.  If the results are similar then your query itself is likely the performance issue.
 
 ### How to improve RLS peformance.
 
