@@ -39,10 +39,10 @@ Add a filter in addition to the RLS:
 `.from('table').select().eq('user_id',userId)`
 
 Use security definer functions to do queries on other tables to bypass their RLS when possible.    
-Instead of having this RLS where the roles_table has a RLS select policy of `auth.uid() = user_id`:  
-`exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
-Create a security definer function get_role() (see link) and do:  
-`has_role()`  
+Instead of having this RLS where the roles_table has an RLS select policy of `auth.uid() = user_id`:  
+`exists (select 1 from team_table where auth.uid() = user_id and role = "good_role")`  
+Create a security definer function has_role() (see link) and do:  
+`has_role()` with code of `exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")`  
 
 
 ### Tools to measure performance
