@@ -4,9 +4,7 @@ Although most of the time spent on thinking about RLS is to get it to handle sec
 of your queries can be massive.
 This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.
 
-Please the [last section](#tools-to-measure-performance) for ways to measure the performance of you queries as you test RLS improvements.
-
-
+Please see the [last section](#tools-to-measure-performance) for ways to measure the performance of you queries as you test RLS improvements.
 
 ### Is RLS causing my peformance issue (on a single table query)?
 
@@ -16,21 +14,21 @@ For very slow queries, or if using the tools at end of article, run a query with
 
 The following tips are very broad and each may or may not help the specific case involved.  Some changes, like adding indexes, should be backed out if they do not make a difference in RLS performance and you are not using them for filtering performance.
 
-The first thing to try is put an index on columns used in the RLS that are not primary keys or unique already.  
+#### The first thing to try is put an index on columns used in the RLS that are not primary keys or unique already.  
 For RLS like:  
 `auth.uid() = user_id`  
 Add an index like:  
 `create index userid on test_table using btree (user_id) tablespace pg_default;`  
 Improvement seen over 100x on large tables.
 
-Another method to improve performance is to wrap your RLS queries and functions in a select statements. 
+#### Another method to improve performance is to wrap your RLS queries and functions in a select statements. 
 WARNING:  You can only do this if the results of the query do not change based on the row data.
 For RLS like this (see code link for examples of functions and table used to test):  
 `is_admin() or auth.uid() = user_id`  
 Use this instead:  
 `(select is_admin()) OR (select auth.uid() = user_id)`
 
-Do not rely on RLS for filtering but only for security.  
+#### Do not rely on RLS for filtering but only for security.  
 Instead of doing this:    
 `.from('table').select()`     
 With an RLS policy of:  
@@ -38,11 +36,17 @@ With an RLS policy of:
 Add a filter in addition to the RLS:  
 `.from('table').select().eq('user_id',userId)`
 
-Use security definer functions to do queries on other tables to bypass their RLS when possible.    
+#### Use security definer functions to do queries on other tables to bypass their RLS when possible.    
 Instead of having this RLS where the roles_table has an RLS select policy of `auth.uid() = user_id`:  
 `exists (select 1 from team_table where auth.uid() = user_id and role = "good_role")`  
 Create a security definer function has_role() (see link) and do:  
 `has_role()` with code of `exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")`  
+
+### Sample results
+
+The code used for the below tests can be found here: LINK:
+
+Show RLS and before after for above examples.
 
 
 ### Tools to measure performance
