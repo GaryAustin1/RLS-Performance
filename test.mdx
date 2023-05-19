@@ -68,13 +68,20 @@ For RLS like this (see code link for examples of functions and table used to tes
 Use this instead:  
 `(select is_admin()) OR (select auth.uid() = user_id)`
 
-Do not relay on RLS for filtering but only for security.  
+Do not rely on RLS for filtering but only for security.  
 Instead of doing this:    
 `.from('table').select()`     
 With an RLS policy of:  
 `auth.uid() = user_id`    
-Add a filter in addtion to the RLS:  
-`.from('table').select().eq('user_id',userId)`  
+Add a filter in addition to the RLS:  
+`.from('table').select().eq('user_id',userId)`
+
+Use security definer functions to do queries on other tables to bypass their RLS when possible.    
+Instead of having this RLS where the roles_table has a RLS select policy of `auth.uid() = user_id`:  
+`exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
+Create a security definer function get_role() (see link) and do:  
+`has_role()`  
+
 
 
 
