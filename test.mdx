@@ -14,7 +14,7 @@ For very slow queries, or if using the tools at end of article, run a query with
 
 ### How to improve RLS peformance.
 
-The following tips are very broad and each may or may not help the specific case involved.  Some changes, like adding indexes, should not be backed out if they do not make a difference in RLS performance and you are not using them for filtering performance.
+The following tips are very broad and each may or may not help the specific case involved.  Some changes, like adding indexes, should be backed out if they do not make a difference in RLS performance and you are not using them for filtering performance.
 
 The first thing to try is put an index on columns used in the RLS that are not primary keys or unique already.  
 For RLS like:  
