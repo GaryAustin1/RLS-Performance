@@ -4,7 +4,7 @@ Although most of the time spent on thinking about RLS is to get it to handle sec
 of your queries can be massive.
 This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.
 
-Please the last section for ways to measure the performance of you queries as you test RLS improvements.
+Please the  [last section](#tools-to-measure-performance) for ways to measure the performance of you queries as you test RLS improvements.
 
 
 
@@ -45,7 +45,7 @@ Create a security definer function get_role() (see link) and do:
 `has_role()`  
 
 
-### Tools to measure performance (basic summary)
+### Tools to measure performance
 
 Postgres has tools to analyze the peformance of queries.  https://www.postgresql.org/docs/current/sql-explain.html
 The use of explain in detail for query analysis is beyond the scope of this discussion.
