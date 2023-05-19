@@ -68,6 +68,13 @@ For RLS like this (see code link for examples of functions and table used to tes
 Use this instead:  
 `(select is_admin()) OR (select auth.uid() = user_id)`
 
+Do not relay on RLS for filtering but only for security.  
+Instead of doing this:    
+`.from('table').select()`     
+With an RLS policy of:  
+`auth.uid() = user_id`    
+Add a filter in addtion to the RLS:  
+`.from('table').select().eq('user_id',userId)`  
 
 
 
