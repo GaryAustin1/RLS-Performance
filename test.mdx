@@ -46,6 +46,12 @@ Instead of having this RLS where the roles_table has an RLS select policy of `au
 Create a security definer function has_role() (see link) and do:  
 `has_role()` with code of `exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")`  
 
+#### Use role in TO option or roles dropdown in the dashboard.  
+Never just use RLS involving auth.uid() or auth.jwt() as your way to rule out 'anon' role.    
+Always add 'authenticated' to the approved roles instead of nothing or public.  
+Although this does not improve the query performance for the signed in user it does
+eliminate 'anon' users without taxing the database to process the rest of the RLS.
+
 ### Sample results
 
 The code used for the below tests can be found here: LINK:
