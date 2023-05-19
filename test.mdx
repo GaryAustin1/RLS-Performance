@@ -24,7 +24,7 @@ Add an index like:
 Improvement seen over 100x on large tables.
 
 Another method to improve performance is to wrap your RLS queries and functions in a select statements. 
-WARNING:  You can only do this if the code does not change based on the row data.
+WARNING:  You can only do this if the results of the query do not change based on the row data.
 For RLS like this (see code link for examples of functions and table used to test):  
 `is_admin() or auth.uid() = user_id`  
 Use this instead:  
