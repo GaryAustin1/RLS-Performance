@@ -18,7 +18,7 @@ Aggregate  (cost=4334.02..4334.04 rows=1 width=112) (actual time=735.015..735.01
 Planning Time: 0.416 ms
 Execution Time: 735.064 ms
 
-Using (select(auth.uid())) = user_id in RLS
+Using (select auth.uid()) = user_id in RLS
 
 Aggregate  (cost=1589.13..1589.16 rows=1 width=112) (actual time=10.373..10.374 rows=1 loops=1)
   ->  Limit  (cost=0.03..1584.63 rows=300 width=84) (actual time=10.341..10.342 rows=1 loops=1)
