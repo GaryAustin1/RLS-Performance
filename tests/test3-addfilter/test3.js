@@ -18,13 +18,13 @@
 /*
 Without filter:
 
-Aggregate  (cost=4334.02..4334.04 rows=1 width=112) (actual time=754.847..754.848 rows=1 loops=1)
-  ->  Limit  (cost=0.00..4334.00 rows=1 width=35) (actual time=754.838..754.838 rows=0 loops=1)
-        ->  Seq Scan on rlstest  (cost=0.00..4334.00 rows=1 width=35) (actual time=754.836..754.837 rows=0 loops=1)
+Aggregate  (cost=4334.02..4334.04 rows=1 width=112) (actual time=740.389..740.390 rows=1 loops=1)
+  ->  Limit  (cost=0.00..4334.00 rows=1 width=35) (actual time=740.363..740.364 rows=1 loops=1)
+        ->  Seq Scan on rlstest  (cost=0.00..4334.00 rows=1 width=35) (actual time=740.361..740.362 rows=1 loops=1)
               Filter: ((COALESCE(NULLIF(current_setting('request.jwt.claim.sub'::text, true), ''::text), ((NULLIF(current_setting('request.jwt.claims'::text, true), ''::text))::jsonb ->> 'sub'::text)))::uuid = user_id)
-              Rows Removed by Filter: 100000
-Planning Time: 0.432 ms
-Execution Time: 754.899 ms
+              Rows Removed by Filter: 99999
+Planning Time: 0.172 ms
+Execution Time: 740.436 ms
 
 With filter:
 
