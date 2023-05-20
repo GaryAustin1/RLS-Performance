@@ -1,12 +1,13 @@
 -- Using a filter even though RLS does filter the results
 -- Run this SQL before js tests
+-- WARNING You must use the UUID of a real user for this test to work with the javascript client test.
 
 drop table if exists rlstest;
 create table
     rlstest as
 select x as id, 'name-' || x as name, uuid_generate_v4() as user_id, 'user' as role
 from generate_series(1, 100000) x;
-update rlstest set (user_id,role) = ('5950b438-b07c-4012-8190-6ce79e4bd8e5','admin') where id = 1;
+update rlstest set (user_id,role) = ('70225db6-b0ba-4116-9b08-6b25f33bb70a','admin') where id = 1;
 alter table rlstest ENABLE ROW LEVEL SECURITY;
 
 create policy "rls_test_select" on rlstest
@@ -16,10 +17,10 @@ create policy "rls_test_select" on rlstest
     );
 
 set session role authenticated;
-set request.jwt.claims to '{"role":"authenticated", "sub":"5950b438-b07c-4012-8190-6ce79e4bd8e5"}';
+set request.jwt.claims to '{"role":"authenticated", "sub":"70225db6-b0ba-4116-9b08-6b25f33bb70a"}';
 
 --explain analyze SELECT count(*) FROM rlstest;
-explain analyze SELECT count(*) FROM rlstest where user_id = '5950b438-b07c-4012-8190-6ce79e4bd8e5';
+explain analyze SELECT count(*) FROM rlstest where user_id = '70225db6-b0ba-4116-9b08-6b25f33bb70a';
 
 set session role postgres;
 
