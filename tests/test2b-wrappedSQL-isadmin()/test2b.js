@@ -1,4 +1,6 @@
 //  Wrapped is_admin test()
+//  Run SQL first
+//  Requires signed in user
 
   const result = await supabase1
       .from('rlstest',{head:true})
