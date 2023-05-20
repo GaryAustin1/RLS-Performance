@@ -28,7 +28,7 @@ $$ language plpgsql security definer;
 create policy "rls_test_select" on rlstest
     to authenticated
     using (
-        (select(is_admin()))
+        (select is_admin())
         --is_admin()  --very slow!
     );
 
