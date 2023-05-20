@@ -58,9 +58,10 @@ The code used for the below tests can be found here: LINK:
 
 Show RLS and before after for above examples.
 
-| Test | RLS Before  |  RLS After   | SQL Before |  SQL After | JS Before | JS After |  
-|-----|------------------------|---------------------------|---------|---------|---|---- |  
-| 1 | auth.uid() = user_id |user_id indexed | 171| <.1|  731 | <.1 |  
+| Test | RLS Before  |  RLS After   | SQL|  SQL | JS | JS |  
+|-----|------------------------|---------------------------|------|------|---|---- |  
+| 1 | auth.uid()=user_id |user_id indexed | 171| <.1|  731 | <.1 |  
+| 2a| auth.uid()=user_id |(select auth.uid()) = user_id|179|9|735|10|  
 
 
 ### Tools to measure performance
