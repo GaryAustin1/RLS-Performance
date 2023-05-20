@@ -12,7 +12,7 @@ alter table rlstest ENABLE ROW LEVEL SECURITY;
 create policy "rls_test_select" on rlstest
     to authenticated
     using (
-        (select(auth.uid())) = user_id
+        (select auth.uid()) = user_id
         --auth.uid() = user_id
     );
 
