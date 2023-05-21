@@ -19,7 +19,7 @@ alter table rlstest_team_user ENABLE ROW LEVEL SECURITY;
 create policy "dummy_read_policy" on rlstest_team_user
     to authenticated using (auth.uid() = user_id );
 
-CREATE OR REPLACE FUNCTION user_teams()
+CREATE OR REPLACE FUNCTION rlstest_user_teams()
     RETURNS table(id int) as
     $$
     begin
@@ -36,7 +36,7 @@ create policy "rls_test_select" on rlstest
         team_id in (
             select team_id from rlstest_team_user where user_id = auth.uid()
             )
-        --team_id in (select user_teams())
+        --team_id in (select rlstest_user_teams())
 
     );
 
