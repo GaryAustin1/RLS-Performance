@@ -20,7 +20,7 @@ set request.jwt.claims to '{"role":"anon", "sub":"5950b438-b07c-4012-8190-6ce79e
 
 explain analyze SELECT count(*) FROM rlstest;
 set session role postgres;
-drop table rlstest;
+
 
 /*
 Run with TO set to authenticated:
