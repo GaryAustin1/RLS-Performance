@@ -1,5 +1,3 @@
-<span style="color:red">DON'T USE STILL GIBBERISH</span>
-
 
 ## RLS Performance and Best Practices
 
@@ -94,13 +92,23 @@ Postgres has tools to analyze the peformance of queries.  https://www.postgresql
 The use of explain in detail for query analysis is beyond the scope of this discussion.
 Here we will use it mainly to get a performance metric to compare times.
 In order to do RLS testing you need to setup the user jwt claims and change the running user to `anon` or `authenticated`.
-```
+```sql
 set session role authenticated;
 set request.jwt.claims to '{"role":"authenticated", "sub":"5950b438-b07c-4012-8190-6ce79e4bd8e5"}';
 
 explain analyze SELECT count(*) FROM rlstest;
 set session role postgres;
 ```
+This will return results like:
+```
+Seq Scan on rlstest  (cost=0.00..4334.00 rows=1 width=35) (actual time=170.999..170.999 rows=0 loops=1)
+"  Filter: ((COALESCE(NULLIF(current_setting('request.jwt.claim.sub'::text, true), ''::text), ((NULLIF(current_setting('request.jwt.claims'::text, true), ''::text))::jsonb ->> 'sub'::text)))::uuid = user_id)"
+  Rows Removed by Filter: 100000
+Planning Time: 0.216 ms
+Execution Time: 171.033 ms
+```
+In this case the execution time is the critical number we need to compare.  
+
 
 PostgREST allows use of explain to get performance information on your queries with Supabase clients.
 
@@ -128,15 +136,9 @@ Aggregate  (cost=8.18..8.20 rows=1 width=112) (actual time=0.017..0.018 rows=1 l
 Planning Time: 0.092 ms
 Execution Time: 0.046 ms
 ```
-In this case the execution time is the critical number we need to compare.
 
-This performance analysis can also be done in the SQL editor by setting a user role and fake jwt claims information for use in the RLS.
 
-```SQL
-set local role authenticated;
-set request.jwt.claims to '{"role":"authenticated", "sub":"5950b438-b07c-4012-8190-6ce79e4bd8e5"}';
-explain analyze SELECT * FROM projects where id = 1;
-```
+
 
 
 
