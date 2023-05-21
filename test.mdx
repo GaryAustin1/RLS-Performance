@@ -59,6 +59,14 @@ Instead of having this RLS where the roles_table has an RLS select policy of `au
 Create a security definer function has_role() (see link) and do:  
 `has_role()` with code of `exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")`  
 
+#### Always optimize join queries to compare row columns to fixed join data.
+This RLS to allow select only for rows where the team_id is one the user has access to:   
+`auth.uid() in (select user_id from team_user where team_user.team_id = table.team_id)`  
+will be much slower than:  
+`team_id in (select team_id from team_user where user_id = auth.uid())`    
+Also consider moving the join query to a security definer function to avoid RLS on join table:   
+`team_id in (select user_teams())`  
+
 #### Use role in TO option or roles dropdown in the dashboard.  
 Never just use RLS involving auth.uid() or auth.jwt() as your way to rule out 'anon' role.    
 Always add 'authenticated' to the approved roles instead of nothing or public.  
