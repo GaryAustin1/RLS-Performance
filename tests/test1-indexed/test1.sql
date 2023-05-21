@@ -22,7 +22,6 @@ set request.jwt.claims to '{"role":"authenticated", "sub":"5950b438-b07c-4012-81
 
 explain analyze SELECT count(*) FROM rlstest;
 set session role postgres;
-drop table rlstest;
 
 /*
 Run with index commented out:
