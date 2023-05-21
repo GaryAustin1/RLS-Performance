@@ -53,7 +53,7 @@ Add a filter in addition to the RLS:
 
 #### (4) Use security definer functions to do queries on other tables to bypass their RLS when possible.    
 Instead of having this RLS where the roles_table has an RLS select policy of `auth.uid() = user_id`:  
-`exists (select 1 from team_table where auth.uid() = user_id and role = "good_role")`  
+`exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
 Create a security definer function has_role() (see link) and do:  
 `has_role()` with code of `exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")`  
 
@@ -85,6 +85,7 @@ Show RLS and before after for above examples.
 |2b|is_admin() *table join* | (select is_admin()) *table join*| 11,000 | 7 || 
 |3| auth.uid()=user_id| add .eq or where on user_id | 171 | 9 |  
 |5| auth.uid() in *table join on col* | col in *table join on auth.uid()*| 9,000 | 20 |
+|6| No TO policy | TO authenticated | 170 | <.1 |
 
 ### Tools to measure performance
 
