@@ -84,7 +84,7 @@ Show RLS and before after for above examples.
 |-----|------------------------|---------------------------|------|------|---|---- |  
 | 1 | auth.uid()=user_id |user_id indexed | 171ms| <.1|  731 | <.1 |  
 | 2a| auth.uid()=user_id |(select auth.uid()) = user_id|179|9|735|10|  
-|2b|is_admin() | (select is_admin())| 11,000 | 7 | T OUT | 7| 
+|2b|is_admin() *table join* | (select is_admin()) *table join*| 11,000 | 7 | T OUT | 7| 
 |3| auth.uid()=user_id| add .eq or where on user_id | 171 | 9 | 740 | 10 |  
 
 
