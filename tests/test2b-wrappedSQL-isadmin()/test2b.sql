@@ -1,6 +1,6 @@
 -- Testing wrapping SQL around a typical security definer function that checks if the user has a role from a 2nd table.
--- Change using() between commented is_admin() and (select(is_admin()))
--- WARNING change is_admin function name if you have an existing function by that name
+-- Change using() between commented testrls_is_admin() and (select(testrls_is_admin()))
+
 
 drop table if exists rlstest;
 create table
@@ -18,7 +18,7 @@ from generate_series(1, 1000) x;
 update rlstest_roles set (user_id,role) = ('70225db6-b0ba-4116-9b08-6b25f33bb70a','user') where id = 1;
 alter table rlstest_roles ENABLE ROW LEVEL SECURITY;
 
-CREATE OR REPLACE FUNCTION is_admin()
+CREATE OR REPLACE FUNCTION testrls_is_admin()
     RETURNS boolean as
 $$
 begin
@@ -29,8 +29,8 @@ $$ language plpgsql security definer;
 create policy "rls_test_select" on rlstest
     to authenticated
     using (
-        (select is_admin())
-        --is_admin()  --very slow!
+        (select rlstest_is_admin())
+        --rlstest_is_admin()  --very slow!
     );
 
 set session role authenticated;
