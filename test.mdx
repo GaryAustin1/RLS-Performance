@@ -7,7 +7,7 @@ Although most of the time spent on thinking about RLS is to get it to handle sec
 of your queries can be massive.
 This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.
 
-Please see the [last section](#tools-to-measure-performance) for ways to measure the performance of you queries as you test RLS improvements.
+Please see the [last section](#tools-to-measure-performance) for ways to measure the performance of your queries as you test RLS improvements.
 
 ### Is RLS causing my peformance issue (on a single table query)?
 
@@ -93,6 +93,14 @@ Show RLS and before after for above examples.
 Postgres has tools to analyze the peformance of queries.  https://www.postgresql.org/docs/current/sql-explain.html
 The use of explain in detail for query analysis is beyond the scope of this discussion.
 Here we will use it mainly to get a performance metric to compare times.
+In order to do RLS testing you need to setup the user jwt claims and change the running user to `anon` or `authenticated`.
+```
+set session role authenticated;
+set request.jwt.claims to '{"role":"authenticated", "sub":"5950b438-b07c-4012-8190-6ce79e4bd8e5"}';
+
+explain analyze SELECT count(*) FROM rlstest;
+set session role postgres;
+```
 
 PostgREST allows use of explain to get performance information on your queries with Supabase clients.
 
