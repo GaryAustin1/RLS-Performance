@@ -68,12 +68,13 @@ eliminate 'anon' users without taxing the database to process the rest of the RL
 ### Sample results
 
 The code used for the below tests can be found here: LINK:
+The tests are on 100K row table.
 
 Show RLS and before after for above examples.
 
 | Test | RLS Before  |  RLS After   | SQL|  SQL | JS | JS |  
 |-----|------------------------|---------------------------|------|------|---|---- |  
-| 1 | auth.uid()=user_id |user_id indexed | 171| <.1|  731 | <.1 |  
+| 1 | auth.uid()=user_id |user_id indexed | 171ms| <.1|  731 | <.1 |  
 | 2a| auth.uid()=user_id |(select auth.uid()) = user_id|179|9|735|10|  
 |2b|is_admin() | (select is_admin())| 11,000 | 7 | T OUT | 7| 
 |3| auth.uid()=user_id| add .eq or where on user_id | 171 | 9 | 740 | 10 |  
