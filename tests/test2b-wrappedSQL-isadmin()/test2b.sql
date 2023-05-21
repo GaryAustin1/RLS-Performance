@@ -18,7 +18,7 @@ from generate_series(1, 1000) x;
 update rlstest_roles set (user_id,role) = ('70225db6-b0ba-4116-9b08-6b25f33bb70a','user') where id = 1;
 alter table rlstest_roles ENABLE ROW LEVEL SECURITY;
 
-CREATE OR REPLACE FUNCTION testrls_is_admin()
+CREATE OR REPLACE FUNCTION rlstest_is_admin()
     RETURNS boolean as
 $$
 begin
