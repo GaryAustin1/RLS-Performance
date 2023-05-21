@@ -24,13 +24,26 @@ Add an index like:
 `create index userid on test_table using btree (user_id) tablespace pg_default;`  
 Improvement seen over 100x on large tables.
 
-#### Another method to improve performance is to wrap your RLS queries and functions in a select statements. 
+#### Another method to improve performance is to wrap your RLS queries and functions in select statements. 
 WARNING:  You can only do this if the results of the query do not change based on the row data.
 For RLS like this:  
 `is_admin() or auth.uid() = user_id`  
 Use this instead:  
 `(select is_admin()) OR (select auth.uid() = user_id)`  
-** see LINK for SQL for functions and code used...   
+
+<details>
+  <summary>is_admin() function:</summary>
+
+  ```sql
+CREATE OR REPLACE FUNCTION is_admin()
+    RETURNS boolean as
+$$
+begin
+    return exists(select from rlstest_roles where auth.uid() = user_id and role = 'admin');
+end;
+$$ language plpgsql security definer;
+  ```
+</details> 
 
 #### Do not rely on RLS for filtering but only for security.  
 Instead of doing this:    
@@ -62,6 +75,8 @@ Show RLS and before after for above examples.
 |-----|------------------------|---------------------------|------|------|---|---- |  
 | 1 | auth.uid()=user_id |user_id indexed | 171| <.1|  731 | <.1 |  
 | 2a| auth.uid()=user_id |(select auth.uid()) = user_id|179|9|735|10|  
+|2b|is_admin() | (select is_admin())| 11,000 | 7 | T OUT | 7| 
+|3| auth.uid()=user_id| add .eq or where on user_id | 171 | 9 | 740 | 10 |  
 
 
 ### Tools to measure performance
