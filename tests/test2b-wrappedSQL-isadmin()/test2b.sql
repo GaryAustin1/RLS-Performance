@@ -1,5 +1,6 @@
 -- Testing wrapping SQL around a typical security definer function that checks if the user has a role from a 2nd table.
 -- Change using() between commented is_admin() and (select(is_admin()))
+-- WARNING change is_admin function name if you have an existing function by that name
 
 drop table if exists rlstest;
 create table
