@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION rlstest_is_admin()
     RETURNS boolean as
 $$
 begin
-    return exists(select from rlstest_roles where auth.uid() = user_id and role = 'admin');
+    return exists(select 1 from rlstest_roles where auth.uid() = user_id and role = 'admin');
 end;
 $$ language plpgsql security definer;
 
