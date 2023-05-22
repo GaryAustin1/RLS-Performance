@@ -54,8 +54,23 @@ Add a filter in addition to the RLS:
 #### (4) Use security definer functions to do queries on other tables to bypass their RLS when possible.    
 Instead of having this RLS where the roles_table has an RLS select policy of `auth.uid() = user_id`:  
 `exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
-Create a security definer function has_role() (see link) and do:  
-`has_role()` with code of `exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")`  
+Create a security definer function has_role() and do:  
+`has_role()` with code of `exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
+Remember functions you use in RLS can be called from the API.
+Secure your functions in an alternate schema if their results would be a security leak.
+
+<details>
+  <summary>has_role() function:</summary>
+```sql
+CREATE OR REPLACE FUNCTION has_role()
+    RETURNS boolean as
+$$
+begin
+    return exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")
+end;
+$$ language plpgsql security definer;
+```
+</details> 
 
 #### (5) Always optimize join queries to compare row columns to fixed join data.
 This RLS to allow select only for rows where the team_id is one the user has access to:   
@@ -74,7 +89,7 @@ eliminate 'anon' users without taxing the database to process the rest of the RL
 ### Sample results
 
 The code used for the below tests can be found here: [LINK](https://github.com/GaryAustin1/rls/tree/main):  
-The tests are on 100K row table.
+The tests are on a 100K row table.
 
 Show RLS and before after for above examples.
 
@@ -82,7 +97,8 @@ Show RLS and before after for above examples.
 |-----|------------------------|---------------------------|------|------|   
 | 1 | auth.uid()=user_id |user_id indexed | 171ms| <.1|  
 | 2a| auth.uid()=user_id |(select auth.uid()) = user_id|179|9|  
-|2b|is_admin() *table join* | (select is_admin()) *table join*| 11,000 | 7 || 
+|2b|is_admin() *table join* | (select is_admin()) *table join*| 11,000 | 7 |
+|2c|is_admin() OR auth.uid()=user_id|(select is_admin()) OR (select auth.uid()=user_id)|11,000|10|
 |3| auth.uid()=user_id| add .eq or where on user_id | 171 | 9 |  
 |5| auth.uid() in *table join on col* | col in *table join on auth.uid()*| 9,000 | 20 |
 |6| No TO policy | TO authenticated | 170 | <.1 |
@@ -137,6 +153,12 @@ Aggregate  (cost=8.18..8.20 rows=1 width=112) (actual time=0.017..0.018 rows=1 l
 Planning Time: 0.092 ms
 Execution Time: 0.046 ms
 ```
+
+*These two github discussions cover the history that lead to this analysis...  
+
+[Stable functions do not seem to be honored in RLS in basic form](https://github.com/orgs/supabase/discussions/9311)  
+[current_setting can lead to bad performance when used on RLS](https://github.com/PostgREST/postgrest-docs/issues/609#)  
+Thanks Steve Chavez and Wolfgang Walther in those threads.
 
 
 
