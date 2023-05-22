@@ -3,7 +3,8 @@
 
 Although most of the time spent on thinking about RLS is to get it to handle security needs, the impact of it on performance
 of your queries can be massive.
-This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.
+This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.  
+Note that queries that use limit and offset will usually have to query all rows to determine order, not just the limit amount.
 
 Please see the [last section](#tools-to-measure-performance) for ways to measure the performance of your queries as you test RLS improvements.
 
