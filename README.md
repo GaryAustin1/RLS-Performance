@@ -74,6 +74,9 @@ $$ language plpgsql security definer;
 </details> 
 
 #### (5) Always optimize join queries to compare row columns to fixed join data.
+Instead of querying on a row column in a join table WHERE, organize your query to get all
+the column values that meet your query into an array or set.
+Then use an IN or ANY operation to filter against the row column.   
 This RLS to allow select only for rows where the team_id is one the user has access to:   
 `auth.uid() in (select user_id from team_user where team_user.team_id = table.team_id)`  
 will be much slower than:  
