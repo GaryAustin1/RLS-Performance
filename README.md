@@ -24,6 +24,7 @@ Add an index like:
 Improvement seen over 100x on large tables.
 
 #### (2) Another method to improve performance is to wrap your RLS queries and functions in select statements. 
+This method works well for jwt functions like auth.uid() and auth.jwt() as well as any other functions including security definer type.
 WARNING:  You can only do this if the results of the query do not change based on the row data.
 For RLS like this:  
 `is_admin() or auth.uid() = user_id`  
