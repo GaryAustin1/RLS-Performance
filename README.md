@@ -68,7 +68,7 @@ CREATE OR REPLACE FUNCTION has_role()
     RETURNS boolean as
 $$
 begin
-    return exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")
+    return exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")
 end;
 $$ language plpgsql security definer;
 ```
