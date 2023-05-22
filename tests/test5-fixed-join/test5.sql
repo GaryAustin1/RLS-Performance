@@ -1,4 +1,5 @@
 -- Always try and do joins on a table to get fixed results for all rows.
+-- Note testing not shown here showed 1000 values in the in compare did not noticibly change good result.
 
 drop table if exists rlstest;
 create table
