@@ -4,6 +4,7 @@
 Although most of the time spent on thinking about RLS is to get it to handle security needs, the impact of it on performance
 of your queries can be massive.
 This is especially true on queries that look at every row in a table like for many select operations and updates with where clauses.
+Note that queries that use limit and offset will usually have to query all rows to determine order, not just the limit amount.
 
 Please see the [last section](#tools-to-measure-performance) for ways to measure the performance of your queries as you test RLS improvements.
 
@@ -73,6 +74,9 @@ $$ language plpgsql security definer;
 </details> 
 
 #### (5) Always optimize join queries to compare row columns to fixed join data.
+Instead of querying on a row column in a join table WHERE, organize your query to get all
+the column values that meet your query into an array or set.
+Then use an IN or ANY operation to filter against the row column.   
 This RLS to allow select only for rows where the team_id is one the user has access to:   
 `auth.uid() in (select user_id from team_user where team_user.team_id = table.team_id)`  
 will be much slower than:  
@@ -159,7 +163,5 @@ Execution Time: 0.046 ms
 [Stable functions do not seem to be honored in RLS in basic form](https://github.com/orgs/supabase/discussions/9311)  
 [current_setting can lead to bad performance when used on RLS](https://github.com/PostgREST/postgrest-docs/issues/609#)  
 Thanks Steve Chavez and Wolfgang Walther in those threads.
-
-
 
 
