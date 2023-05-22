@@ -95,7 +95,7 @@ eliminate 'anon' users without taxing the database to process the rest of the RL
 
 ### Sample results
 
-The code used for the below tests can be found here: [LINK](/tests)):  
+The code used for the below tests can be found here: [LINK](/tests):  
 The tests are on a 100K row table.
 
 Show RLS and before after for above examples.
