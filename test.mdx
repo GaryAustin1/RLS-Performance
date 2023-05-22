@@ -56,6 +56,8 @@ Instead of having this RLS where the roles_table has an RLS select policy of `au
 `exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
 Create a security definer function has_role() (see link) and do:  
 `has_role()` with code of `exists (select 1 from roles_table where uath.uid() = user_id and role = "good_role")`  
+Remember functions you use in RLS can be called from the API.
+Secure your functions in an alternate schema if their results would be a security leak.
 
 #### (5) Always optimize join queries to compare row columns to fixed join data.
 This RLS to allow select only for rows where the team_id is one the user has access to:   
@@ -139,9 +141,11 @@ Planning Time: 0.092 ms
 Execution Time: 0.046 ms
 ```
 
+*These two github discussions cover the history that lead to this analysis...  
 
-
-
+[Stable functions do not seem to be honored in RLS in basic form](https://github.com/orgs/supabase/discussions/9311)  
+[current_setting can lead to bad performance when used on RLS](https://github.com/PostgREST/postgrest-docs/issues/609#)  
+Thanks Steve Chavez and Wolfgang Walther in those threads.
 
 
 
