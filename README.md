@@ -1,4 +1,4 @@
-###--PRELIMINARY--  
+--PRELIMINARY--  
 ## RLS Performance and Best Practices
 
 Although most of the time spent on thinking about RLS is to get it to handle security needs, the impact of it on performance
