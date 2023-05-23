@@ -138,7 +138,8 @@ PostgREST allows use of explain to get performance information on your queries w
 
 Before using this feature you need to run the following command in the Dashboad SQL editor (should not be used in production):
 ```sql
-set pgrst.db_plan_enabled to true;
+alter role authenticator set pgrst.db_plan_enabled to true;
+NOTIFY pgrst, 'reload config';
 ```
 Then you can use the .explain() modifier to get performance metrics.
 ```js
