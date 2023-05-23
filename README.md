@@ -108,7 +108,7 @@ Show RLS and before after for above examples.
 |2c|is_admin() OR auth.uid()=user_id|(select is_admin()) OR (select auth.uid()=user_id)|11,000|10|
 |3| auth.uid()=user_id| add .eq or where on user_id | 171 | 9 |  
 |5| auth.uid() in *table join on col* | col in *table join on auth.uid()*| 9,000 | 20 |
-|6| No TO policy | TO authenticated | 170 | <.1 |
+|6| No TO policy | TO authenticated (anon accessing) | 170 | <.1 |
 
 ### Tools to measure performance
 
