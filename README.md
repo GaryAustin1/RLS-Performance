@@ -48,7 +48,7 @@ $$ language plpgsql security definer;
 </details> 
 
 #### (3) Do not rely on RLS for filtering but only for security.  
-Instead of doing this:    
+Instead of doing this (JS client example):    
 `.from('table').select()`     
 With an RLS policy of:  
 `auth.uid() = user_id`    
