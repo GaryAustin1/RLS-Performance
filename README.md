@@ -65,6 +65,7 @@ Secure your functions in an alternate schema if their results would be a securit
 
 <details>
   <summary>has_role() function:</summary>
+  
 ```sql
 CREATE OR REPLACE FUNCTION has_role()
     RETURNS boolean as
