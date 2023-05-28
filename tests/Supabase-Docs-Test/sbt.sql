@@ -92,7 +92,7 @@ JS
 Execution Time: 772.951 ms
 
 ***************
--- comments policy   post_id in (select posts.id from posts where posts.creator_id = (select auth.uid()))
+-- comments policy   post_id in (select id from posts where creator_id = (select auth.uid()))
 -- 100k posts, 100k comments, 10000 posts by user
 
 Seq Scan on comments  (cost=1737.20..3530.30 rows=38364 width=60) (actual time=14.159..39.396 rows=99989 loops=1)
