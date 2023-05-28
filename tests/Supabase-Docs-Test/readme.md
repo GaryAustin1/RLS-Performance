@@ -30,4 +30,29 @@ Note this article https://www.dbi-services.com/blog/what-is-the-maximum-in-list-
 So at a minimum probably need a note to think about the size of the `in` list when it is some % more of the main table rows.
 
 
+Some other "bad" examples from that page...
+```
+create policy "Team members can update team details if they belong to the team."
+  on teams
+  for update using (
+    auth.uid() in (
+      select user_id from members
+      where team_id = id
+    )
+  );
+```
+This works because it is on an update, but probably better to show it as:
+```
+create policy "Team members can update team details if they belong to the team."
+  on teams
+  for update using (
+    id in (
+      select team_id from members
+      where user_id = auth.uid()
+    )
+  );
+  ```
+ As that would make a huge difference if that policy is used for select also.
+
+
 
