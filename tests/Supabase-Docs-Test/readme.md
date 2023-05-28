@@ -22,4 +22,12 @@ Example: `select auth.uid() = posts.creator_id`
 Method 2: `(select auth.uid()) = posts.creator_id`  
 
 
+Notes: At some point method 5 does not make much sense as the list it builds up can get very large.
+The method clearly makes sense for most cases, especially if the join table is smaller than the main table, or the row being filtered on is a small subset.
+But I tested 50K Posts by the user and the optimizer still chose that method, but time was up to 80ms.
+At 90K posts by the user the optimizer picked another method, but did not break.
+Note this article https://www.dbi-services.com/blog/what-is-the-maximum-in-list-size-in-postgresql/ had the list up to 2M for the `in` and then at 3M ran out of memory.
+So at a minimum probably need a note to think about the size of the `in` list when it is some % more of the main table rows.
+
+
 
