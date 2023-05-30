@@ -108,6 +108,7 @@ Show RLS and before after for above examples.
 |2b|is_admin() *table join* | (select is_admin()) *table join*| 11,000 | 7 |
 |2c|is_admin() OR auth.uid()=user_id|(select is_admin()) OR (select auth.uid()=user_id)|11,000|10|
 |2d|has_role()=role|(select has_role())=role|178,000|12|
+|2e|team_id=any(user_teams())|team_id=any(array(select user_teams()))|173000|16|
 |3| auth.uid()=user_id| add .eq or where on user_id | 171 | 9 |  
 |5| auth.uid() in *table join on col* | col in *table join on auth.uid()*| 9,000 | 20 |
 |6| No TO policy | TO authenticated (anon accessing) | 170 | <.1 |
