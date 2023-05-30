@@ -59,7 +59,8 @@ Add a filter in addition to the RLS:
 Instead of having this RLS where the roles_table has an RLS select policy of `auth.uid() = user_id`:  
 `exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
 Create a security definer function has_role() and do:  
-`has_role()` with code of `exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
+`(select has_role())` with code of `exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
+Note that you should wrap your security definer function in select if it is a fixed value per 2.  
 Remember functions you use in RLS can be called from the API.
 Secure your functions in an alternate schema if their results would be a security leak.
 
