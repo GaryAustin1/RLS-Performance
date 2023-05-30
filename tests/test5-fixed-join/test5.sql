@@ -20,14 +20,6 @@ alter table rlstest_team_user ENABLE ROW LEVEL SECURITY;
 create policy "dummy_read_policy" on rlstest_team_user
     to authenticated using (auth.uid() = user_id );
 
-CREATE OR REPLACE FUNCTION rlstest_user_teams()
-    RETURNS table(id int) as
-    $$
-    begin
-        return query select team_id from rlstest_team_user where auth.uid() = user_id;
-    end;
-    $$ language plpgsql security definer;
-
 create policy "rls_test_select" on rlstest
     to authenticated
     using (
@@ -37,8 +29,6 @@ create policy "rls_test_select" on rlstest
         team_id in (
             select team_id from rlstest_team_user where user_id = auth.uid()
             )
-        --team_id in (select rlstest_user_teams())
-
     );
 
 set session role authenticated;
