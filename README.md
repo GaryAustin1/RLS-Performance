@@ -62,8 +62,8 @@ Create a security definer function has_role() and do:
 `(select has_role())` with code of `exists (select 1 from roles_table where auth.uid() = user_id and role = "good_role")`  
 Note that you should wrap your security definer function in select if it is a fixed value per 2.  
 Remember functions you use in RLS can be called from the API.
-Secure your functions in an alternate schema if their results would be a security leak.
-
+Secure your functions in an alternate schema if their results would be a security leak.  
+Warning: If your security definer function uses row information as an input parameter be sure to test performance as you can't wrap the function as in 2.
 <details>
   <summary>has_role() function:</summary>
   
