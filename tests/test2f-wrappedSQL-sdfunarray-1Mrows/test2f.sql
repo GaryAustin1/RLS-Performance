@@ -1,5 +1,6 @@
 -- Testing wrapping SQL around a security definer function getting role based on auth.uid() from a 2nd table.
--- Change using() between commented policies 1MILLON ROWS
+-- Change using() between commented policies 1 MILLON ROWS add/remove index by comment
+-- Many minutes without wrapping the function.  Adding index does not help on its own without wrapping.
 
 drop table if exists rlstest;
 create table
@@ -15,8 +16,7 @@ create table
     rlstest_team_user as
 select x as id, 'name-' || x as name, uuid_generate_v4() as user_id,x as team_id
 from generate_series(1, 1000) x;
-update rlstest_team_user set (user_id,team_id) = ('70225db6-b0ba-4116-9b08-6b25f33bb70a',1) where id <50 ;
-update rlstest_team_user set (user_id,team_id) = ('70225db6-b0ba-4116-9b08-6b25f33bb70a',2) where id >50 and id <100;
+update rlstest_team_user set user_id = '70225db6-b0ba-4116-9b08-6b25f33bb70a' where id <100 ;
 
 
 alter table rlstest_team_user ENABLE ROW LEVEL SECURITY;
@@ -30,13 +30,13 @@ begin
     return array( select team_id from rlstest_team_user where auth.uid() = user_id);
 end;
 $$ language plpgsql security definer;
-drop policy rls_test_select on rlstest;
+
 create policy "rls_test_select" on rlstest
     to authenticated
     using (
     --    team_id in (1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100)
    team_id = any ( array(select rlstest_user_teams()))
-   --team_id = any(rlstest_user_teams())
+   --team_id = any(rlstest_user_teams())  VERY VERY LONG
     );
 
 set session role authenticated;
@@ -47,7 +47,7 @@ explain analyze SELECT * FROM rlstest;
 set session role postgres;
 
 /*
-Hardcoding:100teams
+--Hardcoding:100teams
 Gather  (cost=1000.25..19078.68 rows=99 width=40) (actual time=0.282..142.843 rows=99 loops=1)
   Workers Planned: 1
   Workers Launched: 0
@@ -57,7 +57,7 @@ Gather  (cost=1000.25..19078.68 rows=99 width=40) (actual time=0.282..142.843 ro
 Planning Time: 0.163 ms
 Execution Time: 142.872 ms
 
-100teams
+--100teams
 Seq Scan on rlstest  (cost=0.26..31745.26 rows=10 width=40) (actual time=2.136..721.356 rows=2 loops=1)
   Filter: (team_id = ANY ($0))
   Rows Removed by Filter: 999998
@@ -66,7 +66,7 @@ Seq Scan on rlstest  (cost=0.26..31745.26 rows=10 width=40) (actual time=2.136..
 Planning Time: 0.093 ms
 Execution Time: 721.392 ms
 
-100 teams indexed...
+--100 teams indexed main table on team_id...
 Bitmap Heap Scan on rlstest  (cost=534.11..10879.13 rows=48890 width=88) (actual time=3.147..3.150 rows=2 loops=1)
   Recheck Cond: (team_id = ANY ($0))
   Heap Blocks: exact=1
@@ -77,5 +77,15 @@ Bitmap Heap Scan on rlstest  (cost=534.11..10879.13 rows=48890 width=88) (actual
 Planning Time: 0.939 ms
 Execution Time: 3.189 ms
 
-*/
+--10k team table, user in 1000 teams (ANY has 1000 entries), indexed main on team_id...
+Index Scan using team on rlstest  (cost=0.69..16.79 rows=10 width=40) (actual time=17.623..24.358 rows=999 loops=1)
+  Index Cond: (team_id = ANY ($0))
+  InitPlan 1 (returns $0)
+    ->  Result  (cost=0.00..0.26 rows=1 width=32) (actual time=17.579..17.579 rows=1 loops=1)
+Planning Time: 0.820 ms
+Execution Time: 24.442 ms
 
+Indexed Row only with 100 and 500 teams just calling function
+Times out
+
+*/
