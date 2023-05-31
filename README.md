@@ -178,7 +178,7 @@ In this case we start with a 1M row table with a team_id column.
 We have a 1000 row team table that has user_ids and team(s) they belong too. 
 Basic RLS for a select would be `team_id = ANY(user_teams())`
 This case times out with over 3 minutes as 1M rows must be searched and the function is run each time on 1000 rows.    
-Changing to `team_id = ANY(ARRAY(select user_teams()))` is a big improvement but can still take seconds.
+Changing to wrap the function (method 2) `team_id = ANY(ARRAY(select user_teams()))` is a big improvement but can still take seconds.
 Adding an index to team_id is the big win, but only with the second case.  Without, the index case still times out.
 
 <details>
