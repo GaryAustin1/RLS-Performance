@@ -172,5 +172,42 @@ Execution Time: 0.046 ms
 [current_setting can lead to bad performance when used on RLS](https://github.com/PostgREST/postgrest-docs/issues/609#)  
 Thanks Steve Chavez and Wolfgang Walther in those threads.
 
+### Added example of security definer function having select of a team table, comparing against a column in main table
+The example is in the test data as test2f.  
+In this case we start with a 1M row table with a team_id column.  
+We have a 1000 row team table that has user_ids and team(s) they belong too. 
+Basic RLS for a select would be `team_id = ANY(user_teams())`
+This case times out with over 3 minutes as 1M rows must be searched and the function is run each time on 1000 rows.    
+Changing to `team_id = ANY(ARRAY(select user_teams()))` is a big improvement but can still take seconds.
+Adding an index to team_id is the big win, but only with the second case.  Without, the index case still times out.
+
+<details>
+  <summary>user_teams() function returning an array:</summary>
+  
+```sql
+CREATE OR REPLACE FUNCTION user_teams()
+    RETURNS int[] as
+$$
+begin
+    return array( select team_id from team_user where auth.uid() = user_id);
+end;
+$$ language plpgsql security definer;
+```
+</details> 
+
+Some results:
+
+| Policy |Index| Main Rs | Team Rs  | on 10 teams | 100 | 500 |note|
+|-----|--|-----|------|--------|-----|---|---| 
+|=ANY(user_teams())|no|1M|1000|>2Min|>2Min|>2Min|TO or killed|
+|=ANY(user_teams())|yes|1M|1000|>2Min|>2Min|>2Min|TO or killed|
+|=ANY(ARRAY(select user_teams()))|no|1M|1000|170ms|700|3300| |
+|=ANY(ARRAY(select user_teams()))|yes|1M|1000|2ms|3|3| |
+|in(1,2,3...100)|no|1M|1000|130ms|130|142|baseline check|
+|=ANY(ARRAY(select user_teams()))|yes|1M|10K|x|x|x|24ms (on 1K teams)|
+
+
+
+
 
 
