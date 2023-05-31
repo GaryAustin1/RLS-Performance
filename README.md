@@ -31,7 +31,7 @@ WARNING:  You can only do this if the results of the query or function do not ch
 For RLS like this:  
 `is_admin() or auth.uid() = user_id`  
 Use this instead:  
-`(select is_admin()) OR (select auth.uid() = user_id)`  
+`(select is_admin()) OR (select auth.uid()) = user_id`  
 
 <details>
   <summary>is_admin() function:</summary>
