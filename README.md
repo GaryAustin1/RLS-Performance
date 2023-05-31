@@ -203,7 +203,7 @@ Some results:
 |=ANY(user_teams())|yes|1M|1000|>2Min|>2Min|>2Min|TO or killed|
 |=ANY(ARRAY(select user_teams()))|no|1M|1000|170ms|700|3300| |
 |=ANY(ARRAY(select user_teams()))|yes|1M|1000|2ms|3|3| |
-|in(1,2,3...100)|no|1M|1000|130ms|142|x|baseline check|
+|in(1,2,3...100)|no|1M|NA|130ms|142|x|baseline check|
 |=ANY(ARRAY(select user_teams()))|yes|1M|10K|x|x|x|24ms (on 1K teams)|
 
 
