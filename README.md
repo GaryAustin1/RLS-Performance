@@ -88,6 +88,7 @@ will be much slower than:
 `team_id in (select team_id from team_user where user_id = auth.uid())`    
 Also consider moving the join query to a security definer function to avoid RLS on join table:   
 `team_id in (select user_teams())`  
+Note that if the `in` list gets to be over 10K items, then extra analysis is likely needed.  See this follow up testing: https://github.com/GaryAustin1/RLS-Performance/tree/main/tests/Supabase-Docs-Test .
 
 #### (6) Use role in TO option or roles dropdown in the dashboard.  
 Never just use RLS involving auth.uid() or auth.jwt() as your way to rule out 'anon' role.    
