@@ -8,11 +8,11 @@ Note that queries that use limit and offset will usually have to query all rows 
 
 Please see the [last section](#tools-to-measure-performance) for ways to measure the performance of your queries as you test RLS improvements.
 
-### Is RLS causing my peformance issue (on a single table query)?
+### Is RLS causing my performance issue (on a single table query)?
 
 For very slow queries, or if using the tools at end of article, run a query with RLS enabled on the table and then with it disabled.  If the results are similar then your query itself is likely the performance issue.  Although, remember any join tables in RLS will also need to run their RLS unless a security definer function is used to bypass them.
 
-### How to improve RLS peformance.
+### How to improve RLS performance.
 
 The following tips are very broad and each may or may not help the specific case involved.  Some changes, like adding indexes, should be backed out if they do not make a difference in RLS performance and you are not using them for filtering performance.
 
